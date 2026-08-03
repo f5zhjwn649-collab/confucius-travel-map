@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>孔子周游列国 · 十四年</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; font-family: '楷体','KaiTi','STKaiti','宋体','SimSun',serif; }
+
+  .top-bar {
+    height: 70px;
+    background: linear-gradient(135deg, #3a322a 0%, #5a4c3a 100%);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; position: relative; z-index: 10;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .top-bar::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #7a8a7a, #8a6a4a, #3a3a3a);
+  }
+  .top-bar .title { color: #f5efe0; font-size: 26px; font-weight: bold; letter-spacing: 4px; }
+  .top-bar .subtitle { color: #c4b896; font-size: 15px; letter-spacing: 2px; }
+
+  .main-area { display: flex; width: 100%; height: calc(100% - 160px); }
+  .sidebar {
+    width: 220px; flex-shrink: 0; height: 100%; overflow-y: auto;
+    background: rgba(255,252,245,0.92); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-right: 1px solid #d0c4b0; z-index: 5;
+  }
+  .sidebar-title {
+    font-family: '楷体','KaiTi','STKaiti',serif; font-size: 15px; font-weight: bold;
+    color: #3a322a; padding: 12px 16px 10px; letter-spacing: 2px;
+    border-bottom: 1px solid rgba(138,106,74,0.2);
+  }
+  .sidebar-item {
+    padding: 10px 16px; cursor: pointer; border-bottom: 1px solid rgba(138,106,74,0.1);
+    border-left: 3px solid transparent; transition: background 0.2s, border-left-color 0.2s;
+    user-select: none;
+  }
+  .sidebar-item:hover { background: rgba(138,106,74,0.06); }
+  .sidebar-item.active {
+    border-left-color: #8a6a4a; background: rgba(138,106,74,0.08);
+  }
+  .sidebar-item .s-order { font-size: 11px; color: #8a7a6a; }
+  .sidebar-item .s-title {
+    font-family: '楷体','KaiTi','STKaiti',serif; font-size: 14px; color: #3a322a;
+    font-weight: bold; margin-top: 1px;
+  }
+  .sidebar-item .s-time { font-size: 11px; color: #a09080; margin-top: 2px; }
+
+  .map-container { flex: 1; height: 100%; position: relative; }
+
+  /* ===== 底部时间轴 ===== */
+  .timeline-bar {
+    height: 90px; width: 100%;
+    background: rgba(255,252,245,0.92); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid #d0c4b0; z-index: 5;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 8px 40px 4px;
+  }
+  .timeline-track-wrap {
+    width: 100%; position: relative; height: 32px;
+    display: flex; align-items: center;
+  }
+  .timeline-track {
+    width: 100%; height: 3px; background: #d0c4b0; border-radius: 2px;
+    position: relative;
+  }
+  .timeline-dot {
+    position: absolute; top: 50%; transform: translate(-50%,-50%);
+    width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    z-index: 2; transition: transform 0.2s;
+  }
+  .timeline-dot:hover { transform: translate(-50%,-50%) scale(1.4); }
+  .timeline-dot.active { transform: translate(-50%,-50%) scale(1.5); box-shadow: 0 0 6px rgba(138,106,74,0.5); }
+  .timeline-slider {
+    position: absolute; top: 50%; transform: translate(-50%,-50%);
+    width: 28px; height: 34px; cursor: pointer;
+    background-color: transparent;
+    background-image: url('玉佩.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: none; border-radius: 0;
+    box-shadow: none; z-index: 3;
+    transition: left 0.15s ease;
+  }
+  .timeline-slider:hover {
+    transform: translate(-50%,-50%) scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(138,106,74,0.4));
+  }
+  .timeline-labels {
+    width: 100%; position: relative; height: 16px;
+    font-family: '楷体','KaiTi','STKaiti',serif;
+    font-size: 11px; color: #8a7a6a;
+  }
+  .timeline-controls {
+    display: flex; gap: 10px; margin-top: 4px;
+  }
+  .timeline-btn {
+    padding: 4px 14px; border: 1px solid #8a6a4a; border-radius: 4px;
+    background: rgba(255,252,245,0.8); cursor: pointer;
+    font-family: '楷体','KaiTi','STKaiti',serif; font-size: 13px;
+    color: #3a322a; letter-spacing: 1px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .timeline-btn:hover { background: rgba(138,106,74,0.15); color: #6a3a2a; }
+  .timeline-btn.active-btn { background: #8a6a4a; color: #f5efe0; border-color: #8a6a4a; }
+  .map-error {
+    display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: rgba(255,252,245,0.95); border: 1px solid #8a6a4a; color: #6a3a2a;
+    padding: 24px 40px; font-size: 18px; border-radius: 6px; z-index: 100;
+    text-align: center; font-family: '楷体','KaiTi',serif;
+  }
+
+  .legend {
+    position: absolute; bottom: 32px; right: 24px;
+    background: rgba(255,252,245,0.88); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(138,106,74,0.3); border-radius: 8px;
+    padding: 16px 20px; z-index: 10;
+    box-shadow: 0 2px 16px rgba(40,35,30,0.12);
+  }
+  .legend-item { display: flex; align-items: center; margin-bottom: 10px; font-size: 13px; color: #3a322a; letter-spacing: 1px; }
+  .legend-item:last-child { margin-bottom: 0; }
+  .legend-dot { width: 14px; height: 14px; border-radius: 50%; margin-right: 10px; flex-shrink: 0; }
+  .legend-line { width: 36px; height: 3px; margin-right: 10px; flex-shrink: 0; border-radius: 2px;
+    background: linear-gradient(90deg, #7a8a7a, #8a6a4a, #3a3a3a); }
+
+  /* ===== 浮动信息卡片 ===== */
+  .float-card {
+    position: absolute; z-index: 200; display: none;
+    background: rgba(255,252,245,0.96); border: 1px solid rgba(138,106,74,0.4);
+    border-radius: 6px; box-shadow: 0 4px 20px rgba(40,35,30,0.18);
+    min-width: 270px; max-width: 320px; user-select: none;
+    font-family: '楷体','KaiTi','STKaiti','宋体','SimSun',serif;
+  }
+  .float-card .drag-bar {
+    height: 22px; background: rgba(138,106,74,0.12);
+    border-radius: 6px 6px 0 0; cursor: move;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 6px; font-size: 11px; color: #8a7a6a;
+  }
+  .float-card .drag-bar .close-btn {
+    cursor: pointer; width: 16px; height: 16px; line-height: 15px;
+    text-align: center; border-radius: 50%; font-size: 12px;
+    color: #8a6a4a; background: rgba(138,106,74,0.15);
+  }
+  .float-card .drag-bar .close-btn:hover { background: rgba(200,80,60,0.2); color: #a04030; }
+  .float-card .card-body { padding: 8px 10px; }
+  .float-card .head { font-size: 16px; font-weight: bold; color: #3a322a; margin-bottom: 6px; letter-spacing: 1px; }
+  .float-card .meta { font-size: 13px; color: #5a4c3a; margin-bottom: 10px; }
+  .float-card .quote { font-size: 18px; color: #6a3a2a; line-height: 1.6; margin-bottom: 4px; letter-spacing: 1px; }
+  .float-card .source { font-size: 12px; color: #8a7a6a; text-align: right; }
+  .float-card .dilemma { font-size: 13px; color: #5a4c3a; margin-bottom: 8px; letter-spacing: 1px; }
+  .float-card .desc { font-size: 12px; color: #8a7a6a; margin-top: 6px; padding-top: 6px; border-top: 1px dotted rgba(138,106,74,0.25); line-height: 1.5; }
+
+  /* ===== 行者之环 · 脉冲指示器 ===== */
+  .journey-beacon {
+    position: absolute; pointer-events: none; z-index: 50;
+    width: 48px; height: 48px; display: none;
+    transform: translate(-50%, -50%);
+  }
+  .journey-beacon .ring {
+    position: absolute; top: 0; left: 0; width: 48px; height: 48px;
+    border-radius: 50%; border: 3px solid rgba(138,106,74,0.7);
+    animation: beacon-pulse 1.6s ease-out infinite;
+  }
+  .journey-beacon .ring:nth-child(2) { animation-delay: 0.53s; }
+  .journey-beacon .core {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    background: rgba(138,106,74,0.85);
+    box-shadow: 0 0 10px rgba(138,106,74,0.5);
+  }
+  @keyframes beacon-pulse {
+    0%   { transform: scale(0.35); opacity: 0.85; }
+    100% { transform: scale(1.3);  opacity: 0; }
+  }
+
+  /* ===== 行者动画标记 ===== */
+  .traveler-group {
+    position: absolute; pointer-events: none; z-index: 100;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    display: none;
+  }
+  .traveler-gif {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 144px; height: auto; image-rendering: auto;
+    background: transparent; z-index: 2;
+  }
+  .traveler-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #8a6a4a; border: 3px solid #f5efe0;
+    box-shadow: 0 0 12px rgba(138,106,74,0.55);
+    margin: 0 auto;
+  }
+  .traveler-ripple {
+    position: absolute; top: 50%; left: 50%;
+    width: 22px; height: 22px; margin-left: -11px; margin-top: -11px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(138,106,74,0.55);
+    animation: traveler-ripple 1.5s ease-out infinite;
+    pointer-events: none;
+  }
+  .traveler-ripple:nth-child(4) { animation-delay: 0.5s; }
+
+  @keyframes traveler-bounce {
+    0%   { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-7px) scale(1.06); }
+  }
+  @keyframes traveler-ripple {
+    0%   { transform: scale(0.8); opacity: 0.7; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <span class="title">🎋 孔子周游列国 · 十四年</span>
+  <span class="subtitle">公元前497年 — 公元前484年</span>
+</header>
+
+<div class="main-area">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-title">📍 站点列表</div>
+  </div>
+  <div class="map-container" id="map">
+      <div class="journey-beacon" id="journeyBeacon"><div class="ring"></div><div class="ring"></div><div class="core"></div></div>
+      <div class="traveler-group" id="travelerGroup">
+        <img class="traveler-gif" id="travelerGif" src="ride.gif" alt="孔子乘车">
+        <div class="traveler-dot"></div>
+        <div class="traveler-ripple"></div>
+        <div class="traveler-ripple"></div>
+      </div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:#7a8a7a;"></span>起点 · 鲁国出发</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#8a6a4a;"></span>途经 · 七国八站</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#3a3a3a;"></span>终点 · 归鲁</div>
+  <div class="legend-item"><span class="legend-line"></span>游历路线（时间流向）</div>
+</div>
+
+    </div>
+</div>
+
+<div class="timeline-bar" id="timelineBar">
+  <div class="timeline-track-wrap">
+    <div class="timeline-track" id="timelineTrack">
+      <div class="timeline-slider" id="timelineSlider"></div>
+    </div>
+  </div>
+  <div class="timeline-ticks" id="timelineTicks" style="width:100%;height:14px;position:relative;"></div>
+        <div class="timeline-labels" id="timelineLabels"></div>
+  <div class="timeline-controls">
+    <button class="timeline-btn" id="btnPlay">▶ 开始旅程</button>
+    <button class="timeline-btn" id="btnPause">⏸ 暂停</button>
+    <button class="timeline-btn" id="btnReset">⟳ 重置</button>
+  </div>
+</div>
+
+<div class="map-error" id="mapError">地图加载失败，请检查高德地图 API Key 是否有效。</div>
+
+
+<script>
+window._AMapSecurityConfig = {
+  securityJsCode: '96acc7a80dcca27c3ca25bb48f86775f'
+};
+</script>
+<script src="https://webapi.amap.com/maps?v=2.0&key=18cfd5ab3e503253df36c5cb232e9b44"></script>
+<script>
+// ===== 站点数据 =====
+var stations = [
+  { order:0, title:'鲁国·出发',       time:'公元前497年', age:55, quote:'天下有道，丘不与易也',     source:'《论语·微子》',   dilemma:'理想与现实的冲突', description:'因鲁定公荒废朝政，孔子失望离鲁', lng:116.9865, lat:35.5807, color:'#7a8a7a', label:'起', place:'鲁国 · 曲阜',   modern:'曲阜'     },
+  { order:1, title:'卫国·子见南子',   time:'公元前496年', age:56, quote:'予所否者，天厌之！天厌之！', source:'《论语·雍也》',   dilemma:'道德困境',         description:'为推行仁政，孔子以礼相见名声不佳的南子', lng:115.0294, lat:35.7621, color:'#8a6a4a', label:'1',  place:'卫国 · 帝丘',   modern:'濮阳'     },
+  { order:2, title:'匡城·子畏于匡',   time:'公元前495年', age:57, quote:'文不在兹乎？',              source:'《论语·子罕》',   dilemma:'身陷囹圄',         description:'因长相酷似阳虎，孔子被匡人围困五日',       lng:114.6683, lat:35.1965, color:'#8a6a4a', label:'2',  place:'匡城',           modern:'长垣'     },
+  { order:3, title:'宋国·伐树于宋',   time:'公元前493年', age:59, quote:'天生德于予',                source:'《论语·述而》',   dilemma:'人身威胁',         description:'桓魋砍倒孔子讲学的大檀树以示恐吓',           lng:115.6564, lat:34.4195, color:'#8a6a4a', label:'3',  place:'宋国 · 商丘',   modern:'商丘'     },
+  { order:4, title:'郑国·丧家之狗',   time:'公元前492年', age:60, quote:'然哉！然哉！',              source:'《史记·孔子世家》', dilemma:'身份体面',       description:'被郑人形容为"丧家之狗"，孔子一笑自嘲',         lng:113.7325, lat:34.3957, color:'#8a6a4a', label:'4',  place:'郑国 · 新郑',   modern:'新郑'     },
+  { order:5, title:'陈国·居陈论道',   time:'公元前491年', age:61, quote:'乘桴浮于海',                source:'《论语·公冶长》', dilemma:'理想受挫',         description:'居陈三年，仁政难行，感慨欲乘桴出海',           lng:114.8865, lat:33.7326, color:'#8a6a4a', label:'5',  place:'陈国 · 宛丘',   modern:'淮阳'     },
+  { order:6, title:'陈蔡之间·厄于绝粮', time:'公元前489年', age:63, quote:'君子固穷',                source:'《论语·卫灵公》', dilemma:'生死考验',         description:'被困荒野七日断粮，子路愠见，孔子抚琴',         lng:115.0000, lat:33.6000, color:'#8a6a4a', label:'6',  place:'陈蔡之间',       modern:'淮阳东南' },
+  { order:7, title:'楚国边境·叶公问政', time:'公元前489年', age:63, quote:'近者悦，远者来',          source:'《论语·子路》',   dilemma:'为政之问',         description:'叶公问政，孔子答以"近悦远来"六字',           lng:113.3572, lat:33.6264, color:'#8a6a4a', label:'7',  place:'楚境 · 叶邑',   modern:'叶县'     },
+  { order:8, title:'终章·归鲁',       time:'公元前484年', age:68, quote:'归与！归与！',              source:'《论语·公冶长》', dilemma:'漂泊终结',         description:'十四年漂泊终结，归鲁后专心整理六经',         lng:116.9865, lat:35.5807, color:'#3a3a3a', label:'终', place:'归鲁 · 曲阜',   modern:'曲阜'     }
+];
+
+// ===== Canvas 圆形图标 =====
+function createIcon(color, label) {
+  var size = 36;
+  var c = document.createElement('canvas');
+  c.width = size; c.height = size;
+  var ctx = c.getContext('2d');
+
+  // 外圈阴影
+  ctx.shadowColor = 'rgba(0,0,0,0.25)';
+  ctx.shadowBlur = 3;
+
+  // 白色外环
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2 - 1.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+
+  // 重置阴影
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+
+  // 纯色填充圆
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2 - 3, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+
+  // 文字
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 16px "楷体","KaiTi","STKaiti",serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, size/2, size/2);
+
+  return c.toDataURL();
+}
+
+// ===== 初始化 =====
+if (typeof AMap === 'undefined') {
+  document.getElementById('mapError').style.display = 'block';
+} else {
+  var map = new AMap.Map('map', {
+    zoom: 7,
+    center: [114.5, 34.8],
+    mapStyle: 'amap://styles/whitesmoke',
+    showLabel: false,
+    features: ['bg', 'road'],
+    resizeEnable: true
+  });
+
+  // 创建标记
+  var allMarkers = [];
+  stations.forEach(function(st) {
+    var iconUrl = createIcon(st.color, st.label);
+    var offX = (st.order === 0) ? -22 : (st.order === 8) ? 22 : 0;
+    var offY = (st.order === 0) ? -22 : (st.order === 8) ? -22 : 0;
+
+    var marker = new AMap.Marker({
+      position: [st.lng, st.lat],
+      content: '<img src="' + iconUrl + '" width="36" height="36" style="display:block;">',
+      offset: new AMap.Pixel(offX, offY),
+      zIndex: 100,
+              draggable: true
+    });
+    // 从 localStorage 恢复保存的位置
+    var savedPos = localStorage.getItem('markerPos_' + st.order);
+    if (savedPos) {
+      var pos = JSON.parse(savedPos);
+      marker.setPosition([pos.lng, pos.lat]);
+    }
+    // 拖动结束后保存位置
+    marker.on('dragend', function() {
+      var p = marker.getPosition();
+      localStorage.setItem('markerPos_' + st.order, JSON.stringify({ lng: p.lng, lat: p.lat }));
+    });
+
+    marker._stationData = st;
+    map.add(marker);
+    allMarkers.push(marker);
+
+    // 点击：切换卡片显隐（不影响其他卡片）
+    marker.on('click', function() {
+      focusStation(st.order);
+    });
+  });
+
+  // ===== 初始化：所有卡片默认显示 =====
+  function positionAllCards() {
+    stations.forEach(function(st) {
+      var card = document.getElementById('floatCard' + st.order);
+      if (!card || card._manuallyPositioned) return;
+      if (card.style.display === 'block' || card.style.display === '') {
+        var pos = map.lngLatToContainer([st.lng, st.lat]);
+        card.style.left = (pos.x + 80) + 'px';
+        card.style.top = (pos.y - 10) + 'px';
+      }
+    });
+  }
+
+  // 创建历史地名标注
+  stations.forEach(function(st) {
+    var text = new AMap.Text({
+      text: st.place,
+      position: [st.lng, st.lat],
+      anchor: 'center',
+              draggable: true,
+      offset: new AMap.Pixel(0, (st.order === 0) ? -40 : (st.order === 8) ? -40 : 38),
+      style: {
+        'font-family': '"楷体","KaiTi","STKaiti",serif',
+        'font-size': '15px',
+        'font-weight': 'bold',
+        'color': '#6a3a2a',
+        'background-color': 'rgba(255,252,245,0.85)',
+        'padding': '3px 10px',
+        'border-radius': '3px',
+        'border': '1px solid rgba(138,106,74,0.35)',
+        'letter-spacing': '1px',
+        'white-space': 'nowrap'
+      }
+    });
+    // 从 localStorage 恢复位置
+    var savedTextPos = localStorage.getItem('textPos_' + st.order);
+    if (savedTextPos) {
+      var tp = JSON.parse(savedTextPos);
+      text.setPosition([tp.lng, tp.lat]);
+    }
+    // 拖动结束后保存
+    text.on('dragend', function() {
+      var p = text.getPosition();
+      localStorage.setItem('textPos_' + st.order, JSON.stringify({ lng: p.lng, lat: p.lat }));
+    });
+
+    map.add(text);
+  });
+
+  // ===== 创建浮动信息卡片（9张，初始隐藏） =====
+  var mapDiv = document.getElementById('map');
+  stations.forEach(function(st) {
+    var card = document.createElement('div');
+    card.className = 'float-card';
+    card.id = 'floatCard' + st.order;
+    card.innerHTML =
+      '<div class="drag-bar" data-card="floatCard' + st.order + '">⋮⋮ 拖动移动 <span class="close-btn" data-card="floatCard' + st.order + '">✕</span></div>'
+      + '<div class="card-body">'
+      + '<div class="head">【第 ' + st.order + ' 站】' + st.title + '（' + st.modern + '）</div>'
+      + '<div class="meta">📅 ' + st.time + ' · 孔子时年' + st.age + '岁</div>'
+      + '<div class="dilemma">🏷️ ' + st.dilemma + '</div>'
+      + '<div class="quote">📖 「' + st.quote + '」</div>'
+      + '<div class="source">—— ' + st.source + '</div>'
+      + '<div class="desc">📝 ' + st.description + '</div>'
+      + '</div>';
+    mapDiv.appendChild(card);
+
+    // 从 localStorage 恢复卡片位置（但始终默认隐藏）
+    var savedCard = localStorage.getItem('cardState_' + st.order);
+    if (savedCard) {
+      var cs = JSON.parse(savedCard);
+      if (cs.left) { card.style.left = cs.left; card.style.top = cs.top; card._manuallyPositioned = true; }
+    }
+    card.style.display = 'none';
+    card._followMarker = allMarkers[st.order];
+    card._followOffsetX = 80;
+    card._followOffsetY = -10;
+
+    // 关闭按钮
+    card.querySelector('.close-btn').onclick = function(e) {
+      e.stopPropagation();
+      card.style.display = 'none';
+      card._manuallyPositioned = false;
+      // 保存关闭状态
+      localStorage.setItem('cardState_' + st.order, JSON.stringify({ visible: false, left: card.style.left, top: card.style.top }));
+    };
+
+    // 拖动逻辑
+    var dragBar = card.querySelector('.drag-bar');
+    var isDragging = false, startX, startY, startLeft, startTop;
+    dragBar.onmousedown = function(e) {
+      isDragging = true; card._manuallyPositioned = true;
+      startX = e.clientX; startY = e.clientY;
+      startLeft = parseInt(card.style.left) || 0;
+      startTop = parseInt(card.style.top) || 0;
+      e.preventDefault();
+    };
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging) return;
+      card.style.left = (startLeft + e.clientX - startX) + 'px';
+      card.style.top = (startTop + e.clientY - startY) + 'px';
+    });
+    document.addEventListener('mouseup', function() {
+      if (!isDragging) return;
+      isDragging = false;
+      // 保存卡片位置
+      localStorage.setItem('cardState_' + st.order, JSON.stringify({
+        visible: card.style.display === 'block',
+        left: card.style.left,
+        top: card.style.top
+      }));
+    });
+  });
+
+  // ===== 侧栏列表 =====
+  var sidebarEl = document.getElementById('sidebar');
+  var sidebarItems = [];
+  stations.forEach(function(st) {
+    var item = document.createElement('div');
+    item.className = 'sidebar-item';
+    item.innerHTML = '<div class="s-order">第' + st.order + '站</div>'
+      + '<div class="s-title">' + st.title + '</div>'
+      + '<div class="s-time">' + st.time + '</div>';
+    item.onclick = function() {
+      focusStation(st.order);
+    };
+    sidebarEl.appendChild(item);
+    sidebarItems.push({ order: st.order, el: item });
+  });
+
+  function updateSidebar(activeOrder) {
+    sidebarItems.forEach(function(si) {
+      if (si.order === activeOrder) {
+        si.el.classList.add('active');
+        si.el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      } else {
+        si.el.classList.remove('active');
+      }
+    });
+  }
+
+  // ===== 时间轴 =====
+  var timelineTrack = document.getElementById('timelineTrack');
+  var timelineSlider = document.getElementById('timelineSlider');
+  var timelineDots = [];
+  var minYear = 497, maxYear = 484;
+
+  stations.forEach(function(st) {
+    var dot = document.createElement('div');
+    dot.className = 'timeline-dot';
+    var stYear = parseInt(st.time.replace('公元前','').replace('前','').replace('年',''));
+    stYear = (stYear < 100) ? -stYear : stYear; // 前497→497, treat as number
+    var yearNum = stYear; // 484-497 BC
+    var frac = (497 - yearNum) / (497 - 484); // 前497=0(最左), 前484=1(最右)
+    dot.style.left = (frac * 100) + '%';
+    dot.style.background = st.color;
+    dot.title = st.title + ' (' + st.time + ')';
+    dot.onclick = function(e) {
+      e.stopPropagation();
+      focusStation(st.order);
+    };
+    timelineTrack.appendChild(dot);
+    timelineDots.push({ order: st.order, el: dot, frac: frac });
+  });
+
+  // ===== 时间轴刻度线和标签 =====
+  var ticksContainer = document.getElementById('timelineTicks');
+  var labelsContainer = document.getElementById('timelineLabels');
+  stations.forEach(function(st) {
+    var stYear = parseInt(st.time.replace('公元前','').replace('前','').replace('年',''));
+    stYear = (stYear < 100) ? -stYear : stYear;
+    var yearNum = stYear;
+    var frac = (497 - yearNum) / (497 - 484);
+    // 刻度线
+    var tick = document.createElement('div');
+    tick.style.cssText = 'position:absolute;left:' + (frac*100) + '%;top:0;width:1px;height:8px;background:#c4b896;transform:translateX(-50%);';
+    ticksContainer.appendChild(tick);
+    // 标签
+    var lbl = document.createElement('span');
+    lbl.style.cssText = 'position:absolute;left:' + (frac*100) + '%;top:0;font-size:10px;color:#a09080;transform:translateX(-50%);white-space:nowrap;';
+    lbl.textContent = '前' + yearNum + '年';
+    labelsContainer.appendChild(lbl);
+  });
+
+  // 滑块初始位置
+  timelineSlider.style.left = '0%';
+
+  // 点击轨道跳转
+  timelineTrack.onclick = function(e) {
+    if (e.target !== timelineTrack) return;
+    var rect = timelineTrack.getBoundingClientRect();
+    var frac = (e.clientX - rect.left) / rect.width;
+    var nearest = null, bestDist = Infinity;
+    timelineDots.forEach(function(td) {
+      var d = Math.abs(td.frac - frac);
+      if (d < bestDist) { bestDist = d; nearest = td; }
+    });
+    if (nearest) focusStation(nearest.order);
+  };
+
+  function closeAllCards() {
+    stations.forEach(function(s) {
+      var c = document.getElementById('floatCard' + s.order);
+      if (c && c.style.display === 'block') {
+        c.style.display = 'none';
+        c._manuallyPositioned = false;
+        localStorage.setItem('cardState_' + s.order, JSON.stringify({ visible: false }));
+      }
+    });
+  }
+
+  function focusStation(order) {
+    // 动画进行中则先停止
+    if (anim.running) {
+      anim.running = false;
+      if (anim.rafId) { cancelAnimationFrame(anim.rafId); anim.rafId = null; }
+      hideTraveler();
+      document.getElementById('travelerGif').style.transform = 'translate(-50%, -50%) scaleX(1)';
+      document.getElementById('btnPlay').classList.remove('active-btn');
+    }
+    closeAllCards();
+    var st = stations[order];
+    var cardEl = document.getElementById('floatCard' + st.order);
+    if (cardEl.style.display !== 'block') {
+      var pos = map.lngLatToContainer([st.lng, st.lat]);
+      cardEl.style.left = (pos.x + 80) + 'px';
+      cardEl.style.top = (pos.y - 10) + 'px';
+      cardEl.style.display = 'block';
+      cardEl._manuallyPositioned = false;
+      cardEl._followMarker = allMarkers[st.order];
+      cardEl._followOffsetX = 80;
+      cardEl._followOffsetY = -10;
+      localStorage.setItem('cardState_' + st.order, JSON.stringify({ visible: true, left: cardEl.style.left, top: cardEl.style.top }));
+    }
+    map.setZoomAndCenter(9, [st.lng, st.lat]);
+    showBeacon(st.order);
+    updateSidebar(st.order);
+    updateTimeline(st.order);
+    positionAllCards();
+  }
+
+  function updateTimeline(activeOrder) {
+    if (activeOrder < 0) {
+      timelineSlider.style.left = '0%';
+      timelineDots.forEach(function(td) { td.el.classList.remove('active'); });
+      return;
+    }
+    var td = timelineDots.find(function(d) { return d.order === activeOrder; });
+    if (td) {
+      timelineSlider.style.left = (td.frac * 100) + '%';
+      timelineDots.forEach(function(d) { d.el.classList.remove('active'); });
+      td.el.classList.add('active');
+    }
+  }
+
+  // 地图移动时，未手动拖动的卡片跟随标记
+  
+  // ===== 行者之环 · 脉冲指示器 =====
+  var beaconEl = document.getElementById('journeyBeacon');
+  var beaconActiveOrder = -1;
+
+  function showBeacon(order) {
+    if (order < 0 || order >= stations.length) { hideBeacon(); return; }
+    beaconActiveOrder = order;
+    beaconEl.style.display = "block";
+    updateBeaconPosition();
+  }
+
+  function hideBeacon() {
+    beaconActiveOrder = -1;
+    beaconEl.style.display = "none";
+  }
+
+  function updateBeaconPosition() {
+    if (beaconActiveOrder < 0) return;
+    var st = stations[beaconActiveOrder];
+    var pos = map.lngLatToContainer([st.lng, st.lat]);
+    beaconEl.style.left = pos.x + "px";
+    beaconEl.style.top = pos.y + "px";
+  }
+
+  map.on('moveend', function() { positionAllCards(); updateBeaconPosition(); });
+  // 首次定位
+  setTimeout(positionAllCards, 800);
+
+  // ===== 播放控制 =====
+  document.getElementById('btnPlay').onclick = function() { startAnim(); };
+
+  document.getElementById('btnPause').onclick = function() {
+    if (anim.running) {
+      anim.running = false;
+      if (anim.rafId) { cancelAnimationFrame(anim.rafId); anim.rafId = null; }
+      document.getElementById('btnPlay').classList.remove('active-btn');
+    }
+  };
+
+  document.getElementById('btnReset').onclick = function() {
+    stopAnim();
+    anim.curSeg = 0; anim.segT = 0; anim.atStation = true;
+    anim.pauseLeft = anim.pauseLen;
+    map.setZoomAndCenter(8, [114.9, 34.6]);
+    updateSidebar(-1);
+    timelineSlider.style.left = '0%';
+    timelineDots.forEach(function(td) { td.el.classList.remove('active'); });
+    closeAllCards();
+  };
+
+  // ===== 动画引擎：行者沿路径行进 =====
+  var anim = {
+    running: false, rafId: null,
+    curSeg: 0, segT: 0, atStation: true,
+    pauseLeft: 0, lastTs: 0,
+    segSpeed: 0.28, pauseLen: 2200
+  };
+
+  function posOnSeg(segIdx, t) {
+    var path = allSampledPaths[segIdx];
+    if (t <= 0) return path[0];
+    if (t >= 1) return path[path.length - 1];
+    var exact = t * (path.length - 1);
+    var i0 = Math.floor(exact), i1 = Math.min(i0 + 1, path.length - 1);
+    var lt = exact - i0;
+    return [
+      path[i0][0] + (path[i1][0] - path[i0][0]) * lt,
+      path[i0][1] + (path[i1][1] - path[i0][1]) * lt
+    ];
+  }
+
+  function showTraveler() { document.getElementById('travelerGroup').style.display = 'block'; }
+  function hideTraveler() { document.getElementById('travelerGroup').style.display = 'none'; }
+
+  function animLoop(ts) {
+    if (!anim.running) return;
+    var dt = Math.min(ts - anim.lastTs, 200);
+    anim.lastTs = ts;
+
+    if (anim.atStation) {
+      anim.pauseLeft -= dt;
+      if (anim.pauseLeft <= 0) {
+        anim.atStation = false;
+        if (anim.curSeg >= allSampledPaths.length) {
+          stopAnim();
+          showCardForStation(stations.length - 1);
+          updateSidebar(stations.length - 1);
+          return;
+        }
+      }
+    }
+
+    if (!anim.atStation) {
+      anim.segT += anim.segSpeed * (dt / 1000);
+      if (anim.segT >= 1.0) {
+        anim.segT = 0;
+        anim.atStation = true;
+        anim.pauseLeft = anim.pauseLen;
+        showCardForStation(anim.curSeg + 1);
+        updateSidebar(anim.curSeg + 1);
+        anim.curSeg++;
+      }
+    }
+
+    // 地图中心跟随 → 行者始终在画面中央
+    if (anim.curSeg < allSampledPaths.length) {
+      var segTClamped = Math.min(Math.max(anim.segT, 0), 1);
+      map.setCenter(posOnSeg(anim.curSeg, segTClamped));
+
+      // 行进方向翻转乘车图（图片左侧为头部，只左右翻转不旋转）
+      if (!anim.atStation) {
+        var path = allSampledPaths[anim.curSeg];
+        var exact = segTClamped * (path.length - 1);
+        var i0 = Math.min(Math.floor(exact), path.length - 2);
+        var dlng = path[i0 + 1][0] - path[i0][0];
+        document.getElementById('travelerGif').style.transform = dlng < 0 ? 'translate(-50%, -50%) scaleX(1)' : 'translate(-50%, -50%) scaleX(-1)';
+      }
+    }
+
+    // 时间轴玉佩滑块跟随（按实际年份比例，与站点标记对齐）
+    var startFrac = timelineDots[anim.curSeg].frac;
+    var endIdx = Math.min(anim.curSeg + 1, allSampledPaths.length);
+    var endFrac = (endIdx < allSampledPaths.length) ? timelineDots[endIdx].frac : 1;
+    var segTForFrac = Math.min(Math.max(anim.segT, 0), 1);
+    var frac = startFrac + (endFrac - startFrac) * segTForFrac;
+    timelineSlider.style.left = (frac * 100) + '%';
+    var activeOrder = anim.atStation ? anim.curSeg : anim.curSeg;
+    timelineDots.forEach(function(td) { td.el.classList.toggle('active', td.order === activeOrder); });
+
+    anim.rafId = requestAnimationFrame(animLoop);
+  }
+
+  function startAnim() {
+    if (anim.running) return;
+    anim.running = true; anim.curSeg = 0; anim.segT = 0;
+    anim.atStation = true; anim.pauseLeft = anim.pauseLen;
+    anim.lastTs = performance.now();
+    hideBeacon(); showTraveler(); map.setZoom(9);
+    document.getElementById('travelerGif').style.transform = 'translate(-50%, -50%) scaleX(1)';
+    closeAllCards();
+    showCardForStation(0); updateSidebar(0);
+    timelineDots.forEach(function(td) { td.el.classList.toggle('active', td.order === 0); });
+    document.getElementById('btnPlay').classList.add('active-btn');
+    anim.rafId = requestAnimationFrame(animLoop);
+  }
+
+  function stopAnim() {
+    anim.running = false;
+    if (anim.rafId) { cancelAnimationFrame(anim.rafId); anim.rafId = null; }
+    hideTraveler();
+    document.getElementById('btnPlay').classList.remove('active-btn');
+  }
+
+  function showCardForStation(order) {
+    closeAllCards();
+    var st = stations[order];
+    var cardEl = document.getElementById('floatCard' + st.order);
+    if (!cardEl || cardEl.style.display === 'block') return;
+    var mapRect = document.getElementById('map').getBoundingClientRect();
+    cardEl.style.left = (mapRect.width / 2 + 80) + 'px';
+    cardEl.style.top = (mapRect.height / 2 - 10) + 'px';
+    cardEl.style.display = 'block';
+    cardEl._manuallyPositioned = false;
+    localStorage.setItem('cardState_' + st.order, JSON.stringify({ visible: true, left: cardEl.style.left, top: cardEl.style.top }));
+  }
+
+  // ===== 路线：自采样贝塞尔曲线 + Polyline =====
+  function lerpC(c1, c2, t) {
+    var r1=parseInt(c1.slice(1,3),16), g1=parseInt(c1.slice(3,5),16), b1=parseInt(c1.slice(5,7),16);
+    var r2=parseInt(c2.slice(1,3),16), g2=parseInt(c2.slice(3,5),16), b2=parseInt(c2.slice(5,7),16);
+    var r=Math.round(r1+(r2-r1)*t), g=Math.round(g1+(g2-g1)*t), b=Math.round(b1+(b2-b1)*t);
+    return "#"+[r,g,b].map(function(v){var s=v.toString(16);return s.length===1?"0"+s:s;}).join("");
+  }
+
+  var routeLines = [];
+  var allSampledPaths = [];  // 8段采样路径，供动画引擎使用
+
+  // 为 8 段路程分别创建贝塞尔曲线（自采样 Polyline + showDir 原生箭头）
+  for (var i = 0; i < stations.length - 1; i++) {
+    var s0 = stations[i], s1 = stations[i+1];
+    var t = i / (stations.length - 2);
+    var segColor;
+    if (t < 0.25) { segColor = lerpC("#7a8a7a", "#8a6a4a", t/0.25); }
+    else if (t < 0.75) { segColor = "#8a6a4a"; }
+    else { segColor = lerpC("#8a6a4a", "#3a3a3a", (t-0.75)/0.25); }
+
+    // 控制点：在连线垂线方向偏移，产生弧度（偏移量按段长缩放）
+    var dx = s1.lng - s0.lng, dy = s1.lat - s0.lat;
+    var segLen = Math.sqrt(dx*dx + dy*dy);
+    var perpX = -dy, perpY = dx;
+    var perpLen = Math.sqrt(perpX*perpX + perpY*perpY) || 1;
+    var offset = Math.min(0.15, segLen * 0.25);
+    perpX = perpX / perpLen * offset;
+    perpY = perpY / perpLen * offset;
+
+    var cp1_lng = s0.lng + dx*0.3 + perpX;
+    var cp1_lat = s0.lat + dy*0.3 + perpY;
+    var cp2_lng = s1.lng - dx*0.3 + perpX;
+    var cp2_lat = s1.lat - dy*0.3 + perpY;
+
+    // 采样三次贝塞尔曲线，保证箭头精确落在曲线上
+    var sampledPath = [];
+    var N = 30;
+    for (var j = 0; j <= N; j++) {
+      var t = j / N, t1 = 1 - t;
+      var slng = t1*t1*t1*s0.lng + 3*t1*t1*t*cp1_lng + 3*t1*t*t*cp2_lng + t*t*t*s1.lng;
+      var slat = t1*t1*t1*s0.lat + 3*t1*t1*t*cp1_lat + 3*t1*t*t*cp2_lat + t*t*t*s1.lat;
+      sampledPath.push([slng, slat]);
+    }
+    allSampledPaths.push(sampledPath);
+
+    var polyline = new AMap.Polyline({
+      path: sampledPath,
+      strokeColor: segColor,
+      strokeWeight: 4,
+      strokeOpacity: 0.88,
+      isOutline: true,
+      outlineColor: "rgba(255,255,255,0.4)",
+      borderWeight: 1,
+      lineCap: "round",
+      lineJoin: "round",
+      showDir: true,
+      zIndex: 50
+    });
+
+    map.add(polyline);
+    routeLines.push(polyline);
+  }
+
+
+  // 暴露全局引用
+  window._map = map;
+  window._markers = allMarkers;
+
+  // 设定视野范围
+  map.setZoomAndCenter(8, [114.9, 34.6]);
+}
+</script>
+
+</body>
+</html>
