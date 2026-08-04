@@ -16,32 +16,45 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   }
   .top-bar::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, #7a8a7a, #8a6a4a, #3a3a3a);
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 6px;
+    background:
+      repeating-linear-gradient(90deg,
+        #8b775a 0px, #8b775a 2px, transparent 2px, transparent 4px,
+        #c4a878 4px, #c4a878 6px, transparent 6px, transparent 8px,
+        #8b775a 8px, #8b775a 10px, transparent 10px, transparent 30px);
   }
-  .top-bar .title { color: #f5efe0; font-size: 26px; font-weight: bold; letter-spacing: 4px; }
-  .top-bar .subtitle { color: #c4b896; font-size: 15px; letter-spacing: 2px; }
+  .top-bar .title { color: #f5efe0; font-size: 26px; font-weight: bold; letter-spacing: 6px; font-family: '隶书','LiSu','楷体','KaiTi','STKaiti',serif; }
+  .top-bar .subtitle { color: #c4b896; font-size: 15px; letter-spacing: 3px; font-family: '隶书','LiSu','楷体','KaiTi','STKaiti',serif; }
 
   .main-area { display: flex; width: 100%; height: calc(100% - 160px); }
   .sidebar {
     width: 220px; flex-shrink: 0; height: 100%; overflow-y: auto;
-    background: rgba(255,252,245,0.92); backdrop-filter: blur(8px);
+    background: rgba(255,252,245,0.94); backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-right: 1px solid #d0c4b0; z-index: 5;
+    border-right: 3px solid #8b775a;
+    box-shadow: inset -8px 0 20px rgba(139,119,90,0.08);
+    position: relative; z-index: 5;
+  }
+  .sidebar::before {
+    content: ''; position: absolute; top: 0; right: 3px; bottom: 0;
+    width: 2px; background: rgba(139,119,90,0.2);
   }
   .sidebar-title {
-    font-family: '楷体','KaiTi','STKaiti',serif; font-size: 15px; font-weight: bold;
-    color: #3a322a; padding: 12px 16px 10px; letter-spacing: 2px;
-    border-bottom: 1px solid rgba(138,106,74,0.2);
+    font-family: '隶书','LiSu','楷体','KaiTi','STKaiti',serif;
+    font-size: 16px; font-weight: bold;
+    color: #3a322a; padding: 14px 16px 12px; letter-spacing: 3px;
+    border-bottom: 2px solid rgba(139,119,90,0.35);
+    text-align: center;
   }
   .sidebar-item {
-    padding: 10px 16px; cursor: pointer; border-bottom: 1px solid rgba(138,106,74,0.1);
+    padding: 10px 16px; cursor: pointer;
+    border-bottom: 1px solid rgba(139,119,90,0.12);
     border-left: 3px solid transparent; transition: background 0.2s, border-left-color 0.2s;
     user-select: none;
   }
-  .sidebar-item:hover { background: rgba(138,106,74,0.06); }
+  .sidebar-item:hover { background: rgba(139,119,90,0.06); }
   .sidebar-item.active {
-    border-left-color: #8a6a4a; background: rgba(138,106,74,0.08);
+    border-left-color: #8b775a; background: rgba(139,119,90,0.08);
   }
   .sidebar-item .s-order { font-size: 11px; color: #8a7a6a; }
   .sidebar-item .s-title {
@@ -55,11 +68,20 @@
   /* ===== 底部时间轴 ===== */
   .timeline-bar {
     height: 90px; width: 100%;
-    background: rgba(255,252,245,0.92); backdrop-filter: blur(8px);
+    background: rgba(255,252,245,0.94); backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-top: 1px solid #d0c4b0; z-index: 5;
+    border-top: 3px solid #8b775a;
+    box-shadow: inset 0 8px 20px rgba(139,119,90,0.06);
+    z-index: 5;
     display: flex; flex-direction: column; align-items: center;
     padding: 8px 40px 4px;
+    position: relative;
+  }
+  .timeline-bar::before {
+    content: ''; position: absolute; top: 3px; left: 0; right: 0; height: 1px;
+    background: repeating-linear-gradient(90deg,
+      #8b775a 0px, #8b775a 6px, transparent 6px, transparent 10px,
+      #c4a878 10px, #c4a878 14px, transparent 14px, transparent 50px);
   }
   .timeline-track-wrap {
     width: 100%; position: relative; height: 32px;
@@ -81,7 +103,7 @@
     position: absolute; top: 50%; transform: translate(-50%,-50%);
     width: 28px; height: 34px; cursor: pointer;
     background-color: transparent;
-    background-image: url('玉佩.png');
+    background-image: url('yupei.png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -119,11 +141,14 @@
 
   .legend {
     position: absolute; bottom: 32px; right: 24px;
-    background: rgba(255,252,245,0.88); backdrop-filter: blur(8px);
+    background: rgba(255,252,245,0.92); backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(138,106,74,0.3); border-radius: 8px;
+    border: 2px solid #8b775a; border-radius: 4px;
     padding: 16px 20px; z-index: 10;
-    box-shadow: 0 2px 16px rgba(40,35,30,0.12);
+    box-shadow:
+      0 0 0 2px rgba(255,252,245,0.9),
+      0 0 0 4px #8b775a,
+      0 2px 20px rgba(40,35,30,0.15);
   }
   .legend-item { display: flex; align-items: center; margin-bottom: 10px; font-size: 13px; color: #3a322a; letter-spacing: 1px; }
   .legend-item:last-child { margin-bottom: 0; }
@@ -131,33 +156,104 @@
   .legend-line { width: 36px; height: 3px; margin-right: 10px; flex-shrink: 0; border-radius: 2px;
     background: linear-gradient(90deg, #7a8a7a, #8a6a4a, #3a3a3a); }
 
-  /* ===== 浮动信息卡片 ===== */
+  /* ===== 浮动信息卡片 · 古风重设计 ===== */
   .float-card {
     position: absolute; z-index: 200; display: none;
-    background: rgba(255,252,245,0.96); border: 1px solid rgba(138,106,74,0.4);
-    border-radius: 6px; box-shadow: 0 4px 20px rgba(40,35,30,0.18);
-    min-width: 270px; max-width: 320px; user-select: none;
+    background: #fdf8ed;
+    background-image:
+      linear-gradient(0deg, rgba(139,119,90,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,119,90,0.03) 1px, transparent 1px);
+    background-size: 18px 18px;
+    border: 2px solid #8b775a;
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 3px #fdf8ed,
+      0 0 0 5px #8b775a,
+      0 4px 28px rgba(40,35,30,0.22);
+    width: 380px; user-select: none;
     font-family: '楷体','KaiTi','STKaiti','宋体','SimSun',serif;
   }
+  /* 四角云纹装饰 */
+  .float-card::before {
+    content: ''; position: absolute; z-index: 5;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, #8b775a 6px, transparent 6px) top left,
+      linear-gradient(225deg, #8b775a 6px, transparent 6px) top right,
+      linear-gradient(45deg,  #8b775a 6px, transparent 6px) bottom left,
+      linear-gradient(315deg, #8b775a 6px, transparent 6px) bottom right;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+  }
   .float-card .drag-bar {
-    height: 22px; background: rgba(138,106,74,0.12);
-    border-radius: 6px 6px 0 0; cursor: move;
+    height: 26px; cursor: move;
+    background: linear-gradient(180deg, rgba(139,119,90,0.18) 0%, rgba(139,119,90,0.05) 100%);
+    border-bottom: 1px solid rgba(139,119,90,0.3);
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 6px; font-size: 11px; color: #8a7a6a;
+    padding: 0 10px; font-size: 11px; color: #8b775a;
+    letter-spacing: 1px;
   }
   .float-card .drag-bar .close-btn {
-    cursor: pointer; width: 16px; height: 16px; line-height: 15px;
-    text-align: center; border-radius: 50%; font-size: 12px;
-    color: #8a6a4a; background: rgba(138,106,74,0.15);
+    cursor: pointer; width: 20px; height: 20px; line-height: 18px;
+    text-align: center; border-radius: 50%; font-size: 13px;
+    color: #8b775a; background: rgba(139,119,90,0.12);
+    transition: background 0.2s, color 0.2s;
   }
-  .float-card .drag-bar .close-btn:hover { background: rgba(200,80,60,0.2); color: #a04030; }
-  .float-card .card-body { padding: 8px 10px; }
-  .float-card .head { font-size: 16px; font-weight: bold; color: #3a322a; margin-bottom: 6px; letter-spacing: 1px; }
-  .float-card .meta { font-size: 13px; color: #5a4c3a; margin-bottom: 10px; }
-  .float-card .quote { font-size: 18px; color: #6a3a2a; line-height: 1.6; margin-bottom: 4px; letter-spacing: 1px; }
-  .float-card .source { font-size: 12px; color: #8a7a6a; text-align: right; }
-  .float-card .dilemma { font-size: 13px; color: #5a4c3a; margin-bottom: 8px; letter-spacing: 1px; }
-  .float-card .desc { font-size: 12px; color: #8a7a6a; margin-top: 6px; padding-top: 6px; border-top: 1px dotted rgba(138,106,74,0.25); line-height: 1.5; }
+  .float-card .drag-bar .close-btn:hover { background: rgba(180,70,50,0.2); color: #a04030; }
+  .float-card .card-body { padding: 0; }
+
+  .float-card .card-illustration {
+    width: 100%; height: 180px; overflow: hidden;
+    background: #f0e8d5;
+    border-bottom: 1px solid rgba(139,119,90,0.35);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .float-card .card-illustration img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .float-card .card-inner {
+    padding: 14px 18px;
+  }
+  .float-card .card-title {
+    font-family: '隶书','LiSu','楷体','KaiTi','STKaiti',serif;
+    font-size: 20px; font-weight: bold; color: #3a322a;
+    letter-spacing: 3px; text-align: center;
+    margin-bottom: 2px;
+  }
+  .float-card .card-title .station-num {
+    font-size: 15px; color: #8b775a; letter-spacing: 1px;
+  }
+  .float-card .card-quote {
+    font-family: '隶书','LiSu','楷体','KaiTi','STKaiti',serif;
+    font-size: 22px; color: #5a3a2a; line-height: 1.7;
+    text-align: center; letter-spacing: 2px;
+    margin: 8px 0 2px; font-weight: bold;
+  }
+  .float-card .card-source {
+    font-size: 13px; color: #8b775a; text-align: center;
+    margin-bottom: 10px; letter-spacing: 1px;
+  }
+  .float-card .card-divider {
+    width: 60%; height: 1px; margin: 0 auto 10px;
+    background: linear-gradient(90deg, transparent, #8b775a, transparent);
+  }
+  .float-card .card-meta {
+    font-size: 13px; color: #5a4c3a; text-align: center;
+    margin-bottom: 6px; letter-spacing: 1px;
+  }
+  .float-card .card-dilemma {
+    font-size: 13px; color: #8b775a; text-align: center;
+    margin-bottom: 8px; letter-spacing: 1px;
+    padding: 3px 12px; display: inline-block;
+    width: 100%; box-sizing: border-box;
+  }
+  .float-card .card-desc {
+    font-size: 13px; color: #6a5a4a; line-height: 1.7;
+    text-align: justify; padding-top: 8px;
+    border-top: 1px dotted rgba(139,119,90,0.25);
+    letter-spacing: 1px;
+  }
 
   /* ===== 行者之环 · 脉冲指示器 ===== */
   .journey-beacon {
@@ -218,12 +314,17 @@
     0%   { transform: scale(0.8); opacity: 0.7; }
     100% { transform: scale(2.6); opacity: 0; }
   }
+
+  /* ===== BGM 音乐按钮（与时间轴按钮一致） ===== */
+  .bgm-btn.playing {
+    background: #8b775a; color: #f5efe0; border-color: #8b775a;
+  }
 </style>
 </head>
 <body>
 
 <header class="top-bar">
-  <span class="title">🎋 孔子周游列国 · 十四年</span>
+  <span class="title">孔子周游列国 · 十四年</span>
   <span class="subtitle">公元前497年 — 公元前484年</span>
 </header>
 
@@ -262,10 +363,12 @@
     <button class="timeline-btn" id="btnPlay">▶ 开始旅程</button>
     <button class="timeline-btn" id="btnPause">⏸ 暂停</button>
     <button class="timeline-btn" id="btnReset">⟳ 重置</button>
+    <button class="timeline-btn" id="bgmBtn">🔇 背景音乐</button>
   </div>
 </div>
 
 <div class="map-error" id="mapError">地图加载失败，请检查高德地图 API Key 是否有效。</div>
+<audio id="bgmAudio" src="bgm.mp3" loop preload="auto"></audio>
 
 
 <script>
@@ -277,53 +380,16 @@ window._AMapSecurityConfig = {
 <script>
 // ===== 站点数据 =====
 var stations = [
-  { order:0, title:'鲁国·出发',       time:'公元前497年', age:55, quote:'天下有道，丘不与易也',     source:'《论语·微子》',   dilemma:'理想与现实的冲突', description:'因鲁定公荒废朝政，孔子失望离鲁', lng:116.9865, lat:35.5807, color:'#7a8a7a', label:'起', place:'鲁国 · 曲阜',   modern:'曲阜'     },
-  { order:1, title:'卫国·子见南子',   time:'公元前496年', age:56, quote:'予所否者，天厌之！天厌之！', source:'《论语·雍也》',   dilemma:'道德困境',         description:'为推行仁政，孔子以礼相见名声不佳的南子', lng:115.0294, lat:35.7621, color:'#8a6a4a', label:'1',  place:'卫国 · 帝丘',   modern:'濮阳'     },
-  { order:2, title:'匡城·子畏于匡',   time:'公元前495年', age:57, quote:'文不在兹乎？',              source:'《论语·子罕》',   dilemma:'身陷囹圄',         description:'因长相酷似阳虎，孔子被匡人围困五日',       lng:114.6683, lat:35.1965, color:'#8a6a4a', label:'2',  place:'匡城',           modern:'长垣'     },
-  { order:3, title:'宋国·伐树于宋',   time:'公元前493年', age:59, quote:'天生德于予',                source:'《论语·述而》',   dilemma:'人身威胁',         description:'桓魋砍倒孔子讲学的大檀树以示恐吓',           lng:115.6564, lat:34.4195, color:'#8a6a4a', label:'3',  place:'宋国 · 商丘',   modern:'商丘'     },
-  { order:4, title:'郑国·丧家之狗',   time:'公元前492年', age:60, quote:'然哉！然哉！',              source:'《史记·孔子世家》', dilemma:'身份体面',       description:'被郑人形容为"丧家之狗"，孔子一笑自嘲',         lng:113.7325, lat:34.3957, color:'#8a6a4a', label:'4',  place:'郑国 · 新郑',   modern:'新郑'     },
-  { order:5, title:'陈国·居陈论道',   time:'公元前491年', age:61, quote:'乘桴浮于海',                source:'《论语·公冶长》', dilemma:'理想受挫',         description:'居陈三年，仁政难行，感慨欲乘桴出海',           lng:114.8865, lat:33.7326, color:'#8a6a4a', label:'5',  place:'陈国 · 宛丘',   modern:'淮阳'     },
-  { order:6, title:'陈蔡之间·厄于绝粮', time:'公元前489年', age:63, quote:'君子固穷',                source:'《论语·卫灵公》', dilemma:'生死考验',         description:'被困荒野七日断粮，子路愠见，孔子抚琴',         lng:115.0000, lat:33.6000, color:'#8a6a4a', label:'6',  place:'陈蔡之间',       modern:'淮阳东南' },
-  { order:7, title:'楚国边境·叶公问政', time:'公元前489年', age:63, quote:'近者悦，远者来',          source:'《论语·子路》',   dilemma:'为政之问',         description:'叶公问政，孔子答以"近悦远来"六字',           lng:113.3572, lat:33.6264, color:'#8a6a4a', label:'7',  place:'楚境 · 叶邑',   modern:'叶县'     },
-  { order:8, title:'终章·归鲁',       time:'公元前484年', age:68, quote:'归与！归与！',              source:'《论语·公冶长》', dilemma:'漂泊终结',         description:'十四年漂泊终结，归鲁后专心整理六经',         lng:116.9865, lat:35.5807, color:'#3a3a3a', label:'终', place:'归鲁 · 曲阜',   modern:'曲阜'     }
+  { order:0, title:'鲁国·出发',       time:'公元前497年', age:55, luYear:'鲁定公十三年', quote:'天下有道，丘不与易也',     source:'《论语·微子》',   dilemma:'理想与现实的冲突', description:'因鲁定公荒废朝政，孔子失望离鲁', lng:116.9865, lat:35.5807, color:'#7a8a7a', label:'起', place:'鲁国 · 曲阜',   modern:'曲阜'     },
+  { order:1, title:'卫国·子见南子',   time:'公元前496年', age:56, luYear:'鲁定公十四年', quote:'予所否者，天厌之！天厌之！', source:'《论语·雍也》',   dilemma:'道德困境',         description:'为推行仁政，孔子以礼相见名声不佳的南子', lng:115.0294, lat:35.7621, color:'#8a6a4a', label:'壹', place:'卫国 · 帝丘',   modern:'濮阳'     },
+  { order:2, title:'匡城·子畏于匡',   time:'公元前495年', age:57, luYear:'鲁定公十五年', quote:'文不在兹乎？',              source:'《论语·子罕》',   dilemma:'身陷囹圄',         description:'因长相酷似阳虎，孔子被匡人围困五日',       lng:114.6683, lat:35.1965, color:'#8a6a4a', label:'贰', place:'匡城',           modern:'长垣'     },
+  { order:3, title:'宋国·伐树于宋',   time:'公元前493年', age:59, luYear:'鲁哀公二年',   quote:'天生德于予',                source:'《论语·述而》',   dilemma:'人身威胁',         description:'桓魋砍倒孔子讲学的大檀树以示恐吓',           lng:115.6564, lat:34.4195, color:'#8a6a4a', label:'叁', place:'宋国 · 商丘',   modern:'商丘'     },
+  { order:4, title:'郑国·丧家之狗',   time:'公元前492年', age:60, luYear:'鲁哀公三年',   quote:'然哉！然哉！',              source:'《史记·孔子世家》', dilemma:'身份体面',       description:'被郑人形容为"丧家之狗"，孔子一笑自嘲',         lng:113.7325, lat:34.3957, color:'#8a6a4a', label:'肆', place:'郑国 · 新郑',   modern:'新郑'     },
+  { order:5, title:'陈国·居陈论道',   time:'公元前491年', age:61, luYear:'鲁哀公四年',   quote:'乘桴浮于海',                source:'《论语·公冶长》', dilemma:'理想受挫',         description:'居陈三年，仁政难行，感慨欲乘桴出海',           lng:114.8865, lat:33.7326, color:'#8a6a4a', label:'伍', place:'陈国 · 宛丘',   modern:'淮阳'     },
+  { order:6, title:'陈蔡之间·厄于绝粮', time:'公元前489年', age:63, luYear:'鲁哀公六年',   quote:'君子固穷',                source:'《论语·卫灵公》', dilemma:'生死考验',         description:'被困荒野七日断粮，子路愠见，孔子抚琴',         lng:115.0000, lat:33.6000, color:'#8a6a4a', label:'陆', place:'陈蔡之间',       modern:'淮阳东南' },
+  { order:7, title:'楚国边境·叶公问政', time:'公元前489年', age:63, luYear:'鲁哀公六年',   quote:'近者悦，远者来',          source:'《论语·子路》',   dilemma:'为政之问',         description:'叶公问政，孔子答以"近悦远来"六字',           lng:113.3572, lat:33.6264, color:'#8a6a4a', label:'柒', place:'楚境 · 叶邑',   modern:'叶县'     },
+  { order:8, title:'终章·归鲁',       time:'公元前484年', age:68, luYear:'鲁哀公十一年', quote:'归与！归与！',              source:'《论语·公冶长》', dilemma:'漂泊终结',         description:'十四年漂泊终结，归鲁后专心整理六经',         lng:116.9865, lat:35.5807, color:'#3a3a3a', label:'终', place:'归鲁 · 曲阜',   modern:'曲阜'     }
 ];
-
-// ===== Canvas 圆形图标 =====
-function createIcon(color, label) {
-  var size = 36;
-  var c = document.createElement('canvas');
-  c.width = size; c.height = size;
-  var ctx = c.getContext('2d');
-
-  // 外圈阴影
-  ctx.shadowColor = 'rgba(0,0,0,0.25)';
-  ctx.shadowBlur = 3;
-
-  // 白色外环
-  ctx.beginPath();
-  ctx.arc(size/2, size/2, size/2 - 1.5, 0, Math.PI * 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.fill();
-
-  // 重置阴影
-  ctx.shadowColor = 'transparent';
-  ctx.shadowBlur = 0;
-
-  // 纯色填充圆
-  ctx.beginPath();
-  ctx.arc(size/2, size/2, size/2 - 3, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
-
-  // 文字
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 16px "楷体","KaiTi","STKaiti",serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(label, size/2, size/2);
-
-  return c.toDataURL();
-}
 
 // ===== 初始化 =====
 if (typeof AMap === 'undefined') {
@@ -341,13 +407,12 @@ if (typeof AMap === 'undefined') {
   // 创建标记
   var allMarkers = [];
   stations.forEach(function(st) {
-    var iconUrl = createIcon(st.color, st.label);
-    var offX = (st.order === 0) ? -22 : (st.order === 8) ? 22 : 0;
-    var offY = (st.order === 0) ? -22 : (st.order === 8) ? -22 : 0;
-
+    var iconSize = 63;
+    var offX = (st.order === 0) ? -42 : (st.order === 8) ? -21 : -31;
+    var offY = (st.order === 0) ? -42 : (st.order === 8) ? -21 : -31;
     var marker = new AMap.Marker({
       position: [st.lng, st.lat],
-      content: '<img src="' + iconUrl + '" width="36" height="36" style="display:block;">',
+      content: '<div style="position:relative;width:' + iconSize + 'px;height:' + iconSize + 'px;"><img src="point.png" width="' + iconSize + '" height="' + iconSize + '" style="display:block;"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:22px;font-weight:bold;font-family:\'楷体\',\'KaiTi\',\'STKaiti\',serif;text-shadow:0 1px 2px rgba(0,0,0,0.5);pointer-events:none;">' + st.label + '</div></div>',
       offset: new AMap.Pixel(offX, offY),
       zIndex: 100,
               draggable: true
@@ -381,8 +446,8 @@ if (typeof AMap === 'undefined') {
       if (!card || card._manuallyPositioned) return;
       if (card.style.display === 'block' || card.style.display === '') {
         var pos = map.lngLatToContainer([st.lng, st.lat]);
-        card.style.left = (pos.x + 80) + 'px';
-        card.style.top = (pos.y - 10) + 'px';
+        card.style.left = (pos.x - 520) + 'px';
+        card.style.top = (pos.y - 220) + 'px';
       }
     });
   }
@@ -394,7 +459,7 @@ if (typeof AMap === 'undefined') {
       position: [st.lng, st.lat],
       anchor: 'center',
               draggable: true,
-      offset: new AMap.Pixel(0, (st.order === 0) ? -40 : (st.order === 8) ? -40 : 38),
+      offset: new AMap.Pixel((st.order === 8) ? 120 : 0, (st.order === 0 || st.order === 8 || st.order === 5) ? -40 : 38),
       style: {
         'font-family': '"楷体","KaiTi","STKaiti",serif',
         'font-size': '15px',
@@ -432,13 +497,16 @@ if (typeof AMap === 'undefined') {
     card.innerHTML =
       '<div class="drag-bar" data-card="floatCard' + st.order + '">⋮⋮ 拖动移动 <span class="close-btn" data-card="floatCard' + st.order + '">✕</span></div>'
       + '<div class="card-body">'
-      + '<div class="head">【第 ' + st.order + ' 站】' + st.title + '（' + st.modern + '）</div>'
-      + '<div class="meta">📅 ' + st.time + ' · 孔子时年' + st.age + '岁</div>'
-      + '<div class="dilemma">🏷️ ' + st.dilemma + '</div>'
-      + '<div class="quote">📖 「' + st.quote + '」</div>'
-      + '<div class="source">—— ' + st.source + '</div>'
-      + '<div class="desc">📝 ' + st.description + '</div>'
-      + '</div>';
+      + '<div class="card-illustration"><img src="' + st.order + '.png" alt="' + st.title + '"></div>'
+      + '<div class="card-inner">'
+      + '<div class="card-title"><span class="station-num">【第' + st.order + '站】</span><br>' + st.title + '</div>'
+      + '<div class="card-quote">「' + st.quote + '」</div>'
+      + '<div class="card-source">—— ' + st.source + '</div>'
+      + '<div class="card-divider"></div>'
+      + '<div class="card-meta">' + st.luYear + '（' + st.time + '）· 孔子时年' + st.age + '岁</div>'
+      + '<div class="card-dilemma">' + st.dilemma + '</div>'
+      + '<div class="card-desc">' + st.description + '</div>'
+      + '</div></div>';
     mapDiv.appendChild(card);
 
     // 从 localStorage 恢复卡片位置（但始终默认隐藏）
@@ -449,8 +517,8 @@ if (typeof AMap === 'undefined') {
     }
     card.style.display = 'none';
     card._followMarker = allMarkers[st.order];
-    card._followOffsetX = 80;
-    card._followOffsetY = -10;
+    card._followOffsetX = -520;
+    card._followOffsetY = -220;
 
     // 关闭按钮
     card.querySelector('.close-btn').onclick = function(e) {
@@ -494,7 +562,8 @@ if (typeof AMap === 'undefined') {
   stations.forEach(function(st) {
     var item = document.createElement('div');
     item.className = 'sidebar-item';
-    item.innerHTML = '<div class="s-order">第' + st.order + '站</div>'
+    var orderText = (st.order === 0) ? '启程' : (st.order === 8) ? '终点' : '第' + st.label + '站';
+    item.innerHTML = '<div class="s-order">' + orderText + '</div>'
       + '<div class="s-title">' + st.title + '</div>'
       + '<div class="s-time">' + st.time + '</div>';
     item.onclick = function() {
@@ -599,13 +668,13 @@ if (typeof AMap === 'undefined') {
     var cardEl = document.getElementById('floatCard' + st.order);
     if (cardEl.style.display !== 'block') {
       var pos = map.lngLatToContainer([st.lng, st.lat]);
-      cardEl.style.left = (pos.x + 80) + 'px';
-      cardEl.style.top = (pos.y - 10) + 'px';
+      cardEl.style.left = (pos.x - 520) + 'px';
+      cardEl.style.top = (pos.y - 220) + 'px';
       cardEl.style.display = 'block';
       cardEl._manuallyPositioned = false;
       cardEl._followMarker = allMarkers[st.order];
-      cardEl._followOffsetX = 80;
-      cardEl._followOffsetY = -10;
+      cardEl._followOffsetX = -520;
+      cardEl._followOffsetY = -220;
       localStorage.setItem('cardState_' + st.order, JSON.stringify({ visible: true, left: cardEl.style.left, top: cardEl.style.top }));
     }
     map.setZoomAndCenter(9, [st.lng, st.lat]);
@@ -790,8 +859,8 @@ if (typeof AMap === 'undefined') {
     var cardEl = document.getElementById('floatCard' + st.order);
     if (!cardEl || cardEl.style.display === 'block') return;
     var mapRect = document.getElementById('map').getBoundingClientRect();
-    cardEl.style.left = (mapRect.width / 2 + 80) + 'px';
-    cardEl.style.top = (mapRect.height / 2 - 10) + 'px';
+    cardEl.style.left = (mapRect.width / 2 - 520) + 'px';
+    cardEl.style.top = (mapRect.height / 2 - 220) + 'px';
     cardEl.style.display = 'block';
     cardEl._manuallyPositioned = false;
     localStorage.setItem('cardState_' + st.order, JSON.stringify({ visible: true, left: cardEl.style.left, top: cardEl.style.top }));
@@ -867,6 +936,55 @@ if (typeof AMap === 'undefined') {
 
   // 设定视野范围
   map.setZoomAndCenter(8, [114.9, 34.6]);
+
+  // ===== BGM 背景音乐控制 =====
+  var bgmAudio = document.getElementById('bgmAudio');
+  var bgmBtn = document.getElementById('bgmBtn');
+  var bgmPlaying = false;
+
+  function toggleBGM() {
+    if (bgmPlaying) {
+      bgmAudio.pause();
+      bgmBtn.textContent = '🔇 背景音乐';
+      bgmBtn.classList.remove('playing');
+      bgmPlaying = false;
+    } else {
+      var playPromise = bgmAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(function() {
+          bgmBtn.textContent = '🔊 背景音乐';
+          bgmBtn.classList.add('playing');
+          bgmPlaying = true;
+        }).catch(function(e) {
+          // 浏览器拦截自动播放，等待用户交互
+          bgmBtn.textContent = '🔇 背景音乐';
+          bgmBtn.classList.remove('playing');
+          bgmPlaying = false;
+        });
+      }
+    }
+  }
+
+  bgmBtn.onclick = function(e) {
+    e.stopPropagation();
+    toggleBGM();
+  };
+
+  // 首次用户点击页面任意位置时尝试自动播放
+  var bgmAutoplayAttempted = false;
+  document.addEventListener('click', function() {
+    if (!bgmAutoplayAttempted && !bgmPlaying) {
+      bgmAutoplayAttempted = true;
+      var playPromise = bgmAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(function() {
+          bgmBtn.textContent = '🔊 背景音乐';
+          bgmBtn.classList.add('playing');
+          bgmPlaying = true;
+        }).catch(function() {});
+      }
+    }
+  }, { once: false });
 }
 </script>
 
